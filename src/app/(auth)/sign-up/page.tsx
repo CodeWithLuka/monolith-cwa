@@ -3,11 +3,7 @@ import { SignUpForm } from "@/features/auth/ui/components/sign-up-form";
 
 const SignUpPage = async () => {
   await requireUnAuth();
-  return (
-    <div>
-      <SignUpForm />
-    </div>
-  );
+  return <SignUpForm />;
 };
 
 export default SignUpPage;

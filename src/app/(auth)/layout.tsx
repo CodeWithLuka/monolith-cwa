@@ -1,3 +1,4 @@
+import { AuthLayoutView } from "@/features/auth/ui/views/auth-layout-view";
 import { ReactNode } from "react";
 
 interface AuthLayoutProps {
@@ -5,11 +6,7 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
-  return (
-    <div>
-      <main>{children}</main>
-    </div>
-  );
+  return <AuthLayoutView>{children}</AuthLayoutView>;
 };
 
 export default AuthLayout;
