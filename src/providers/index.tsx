@@ -2,6 +2,9 @@
 
 import { ReactNode } from "react";
 
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { TRPCReactProvider } from "@/trpc/client";
 
 interface ClientProvidersProps {
@@ -9,5 +12,10 @@ interface ClientProvidersProps {
 }
 
 export const ClientProviders = ({ children }: ClientProvidersProps) => {
-  return <TRPCReactProvider>{children}</TRPCReactProvider>;
+  return (
+    <TRPCReactProvider>
+      <TooltipProvider>{children}</TooltipProvider>
+      <Toaster richColors position="top-right" />
+    </TRPCReactProvider>
+  );
 };
