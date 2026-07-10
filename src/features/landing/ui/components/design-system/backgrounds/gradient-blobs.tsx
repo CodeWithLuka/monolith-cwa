@@ -1,0 +1,54 @@
+export function GradientBlobs() {
+  return (
+    <>
+      <div
+        aria-hidden
+        className="
+        absolute
+        left-0
+        top-0
+        h-[700px]
+        w-[700px]
+        rounded-full
+        blur-[160px]
+        opacity-30
+        pointer-events-none
+        bg-primary/20
+      "
+      />
+
+      <div
+        aria-hidden
+        className="
+        absolute
+        right-0
+        top-[20%]
+        h-[500px]
+        w-[500px]
+        rounded-full
+        blur-[180px]
+        opacity-20
+        pointer-events-none
+        bg-chart-2/20
+      "
+      />
+
+      <div
+        aria-hidden
+        className="
+        absolute
+        left-1/2
+        bottom-0
+        h-[600px]
+        w-[600px]
+        -translate-x-1/2
+        rounded-full
+        blur-[180px]
+        opacity-20
+        pointer-events-none
+        bg-primary/10
+      "
+      />
+    </>
+  );
+}
