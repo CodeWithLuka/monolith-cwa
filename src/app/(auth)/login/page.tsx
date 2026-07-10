@@ -3,11 +3,7 @@ import { LoginForm } from "@/features/auth/ui/components/login-form";
 
 const LoginPage = async () => {
   await requireUnAuth();
-  return (
-    <div>
-      <LoginForm />
-    </div>
-  );
+  return <LoginForm />;
 };
 
 export default LoginPage;
