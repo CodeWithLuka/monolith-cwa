@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { toast } from "sonner";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { useHasActiveSubscription } from "@/hooks/subscriptions/use-subscription";
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +26,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
 import { NavUser } from "./nav-user";
 
 const menuItems = [
@@ -50,8 +53,47 @@ const menuItems = [
 ];
 
 export const DashboardSidebar = () => {
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
+
+  const onUpgrade = async () => {
+    const toastId = "upgrade";
+
+    await authClient.checkout(
+      {
+        slug: "monolith-pro",
+      },
+      {
+        onError: ({ error }) => {
+          toast.error("Couldn't start checkout", {
+            id: toastId,
+            description:
+              error.message || "Something went wrong. Please try again.",
+            duration: 5000,
+          });
+        },
+      },
+    );
+  };
+
+  const onBillingPortal = async () => {
+    const toastId = "billing";
+
+    await authClient.customer.portal(
+      {},
+      {
+        onError: ({ error }) => {
+          toast.error("Couldn't open billing portal", {
+            id: toastId,
+            description:
+              error.message || "Something went wrong. Please try again.",
+            duration: 5000,
+          });
+        },
+      },
+    );
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -103,24 +145,26 @@ export const DashboardSidebar = () => {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              render={<Link href="/pricing" prefetch />}
-              tooltip="Upgrade to Pro"
-              className="gap-x-4 h-10 px-4"
-            >
-              <StarIcon className="h-4 w-4" />
-              <span>Upgrade to Pro</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {!hasActiveSubscription && !isLoading && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Upgrade to Pro"
+                className="gap-x-4 h-10 px-4"
+                onClick={onUpgrade}
+              >
+                <StarIcon className="size-4" />
+                <span>Upgrade to Pro</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
 
           <SidebarMenuItem>
             <SidebarMenuButton
-              render={<Link href="/billing" prefetch />}
               tooltip="Billing Portal"
               className="gap-x-4 h-10 px-4"
+              onClick={onBillingPortal}
             >
-              <CreditCardIcon className="h-4 w-4" />
+              <CreditCardIcon className="size-4" />
               <span>Billing Portal</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

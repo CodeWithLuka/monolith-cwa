@@ -99,7 +99,7 @@ export const SignUpForm = () => {
                   variant="outline"
                   className="w-full"
                   type="button"
-                  disabled={isPending}
+                  disabled={true}
                 >
                   <Image
                     src="/logos/github.svg"
@@ -113,7 +113,7 @@ export const SignUpForm = () => {
                   variant="outline"
                   className="w-full"
                   type="button"
-                  disabled={isPending}
+                  disabled={true}
                 >
                   <Image
                     src="/logos/google.svg"

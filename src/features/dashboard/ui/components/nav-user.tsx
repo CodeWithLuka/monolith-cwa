@@ -73,6 +73,42 @@ export function NavUser() {
     });
   };
 
+  const onUpgrade = async () => {
+    const toastId = "upgrade";
+
+    await authClient.checkout(
+      {
+        slug: "monolith-pro",
+      },
+      {
+        onError: ({ error }) => {
+          toast.error("Couldn't start checkout", {
+            id: toastId,
+            description:
+              error.message || "Something went wrong. Please try again.",
+          });
+        },
+      },
+    );
+  };
+
+  const onBillingPortal = async () => {
+    const toastId = "billing";
+
+    await authClient.customer.portal(
+      {},
+      {
+        onError: ({ error }) => {
+          toast.error("Couldn't open billing portal", {
+            id: toastId,
+            description:
+              error.message || "Something went wrong. Please try again.",
+          });
+        },
+      },
+    );
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -142,8 +178,8 @@ export function NavUser() {
 
             <DropdownMenuGroup>
               <DropdownMenuItem
-                render={<Link href="/pricing" prefetch />}
                 className="gap-x-3 h-10 cursor-pointer"
+                onClick={onUpgrade}
               >
                 <SparklesIcon className="size-4" />
                 <span>Upgrade to Pro</span>
@@ -152,8 +188,8 @@ export function NavUser() {
 
             <DropdownMenuGroup>
               <DropdownMenuItem
-                render={<Link href="/billing" prefetch />}
                 className="gap-x-3 h-10 cursor-pointer"
+                onClick={onBillingPortal}
               >
                 <CreditCardIcon className="size-4" />
                 <span>Billing</span>
