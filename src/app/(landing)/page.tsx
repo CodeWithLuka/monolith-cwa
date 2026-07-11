@@ -1,3 +1,4 @@
+import { requireUnAuth } from "@/features/auth/lib/auth-utils";
 import {
   CtaSection,
   Community,
@@ -9,7 +10,8 @@ import {
   TrustedNodes,
 } from "@/features/landing/ui/components/sections";
 
-const LandingPage = () => {
+const LandingPage = async () => {
+  await requireUnAuth();
   return (
     <>
       <Hero />
