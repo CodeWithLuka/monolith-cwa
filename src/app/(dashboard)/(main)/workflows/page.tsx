@@ -1,12 +1,27 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
+import { HydrateClient } from "@/trpc/server";
 import { requireAuth } from "@/features/auth/lib/auth-utils";
+import { WorkflowsList } from "@/features/workflows/components/workflows-list";
+import { prefetchWorkflows } from "@/features/workflows/server/prefetch-workflows";
+import { WorkflowsContainer } from "@/features/workflows/components/workflows-container";
 
 const WorkflowsPage = async () => {
   await requireAuth();
 
+  prefetchWorkflows();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black gap-6">
-      <h1 className="text-3xl"> Think, Workflows</h1>
-    </div>
+    <WorkflowsContainer>
+      <HydrateClient>
+        <ErrorBoundary fallback={<p>Error</p>}>
+          <Suspense fallback={<p>Loading</p>}>
+            <WorkflowsList />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrateClient>
+    </WorkflowsContainer>
   );
 };
 
