@@ -1,11 +1,16 @@
 import { generateSlug } from "random-word-slugs";
 
 import prisma from "@/db";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  createTRPCRouter,
+  premiumProcedure,
+  protectedProcedure,
+} from "@/trpc/init";
 import z from "zod";
+import { PAGINATION } from "@/constants";
 
 export const workflowsRouter = createTRPCRouter({
-  create: protectedProcedure.mutation(({ ctx }) => {
+  create: premiumProcedure.mutation(({ ctx }) => {
     const userId = ctx.auth.user.id;
 
     const createdWorkflow = prisma.workflow.create({
@@ -36,17 +41,62 @@ export const workflowsRouter = createTRPCRouter({
 
       return existingWorkflow;
     }),
-  getMany: protectedProcedure.query(({ ctx }) => {
-    const userId = ctx.auth.user.id;
+  getMany: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(PAGINATION.DEFAULT_PAGE),
+        pageSize: z
+          .number()
+          .min(PAGINATION.MIN_PAGE_SIZE)
+          .max(PAGINATION.MAX_PAGE_SIZE)
+          .default(PAGINATION.DEFAULT_PAGE_SIZE),
+        search: z.string().default(PAGINATION.SEARCH),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.auth.user.id;
+      const { page, pageSize, search } = input;
 
-    const existingWorkflows = prisma.workflow.findMany({
-      where: {
-        userId,
-      },
-    });
+      const [items, totalCount] = await Promise.all([
+        prisma.workflow.findMany({
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          where: {
+            userId: ctx.auth.user.id,
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+        }),
+        prisma.workflow.count({
+          where: {
+            userId: ctx.auth.user.id,
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        }),
+      ]);
 
-    return existingWorkflows;
-  }),
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const hasNextPage = page < totalPages;
+      const hasPreviousPage = page > 1;
+
+      return {
+        items,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      };
+    }),
   remove: protectedProcedure
     .input(
       z.object({

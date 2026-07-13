@@ -8,13 +8,16 @@ import {
 
 import { useTRPC } from "@/trpc/client";
 
+import { useWorkflowsParams } from "./use-workflows-params";
+
 /**
  * Hook to fetch all workflows using suspense
  */
 export const useSuspenseWorkflows = () => {
   const trpc = useTRPC();
+  const [params] = useWorkflowsParams();
 
-  return useSuspenseQuery(trpc.workflows.getMany.queryOptions());
+  return useSuspenseQuery(trpc.workflows.getMany.queryOptions(params));
 };
 
 /**
@@ -45,7 +48,7 @@ export const useCreateWorkflow = () => {
         });
 
         await queryClient.invalidateQueries(
-          trpc.workflows.getMany.queryOptions(),
+          trpc.workflows.getMany.queryOptions({}),
         );
       },
 
