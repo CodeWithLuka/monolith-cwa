@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,8 +15,12 @@ interface ClientProvidersProps {
 export const ClientProviders = ({ children }: ClientProvidersProps) => {
   return (
     <TRPCReactProvider>
-      <TooltipProvider>{children}</TooltipProvider>
-      <Toaster richColors position="top-right" />
+      <TooltipProvider>
+        <NuqsAdapter>
+          {children}
+          <Toaster richColors position="top-right" />
+        </NuqsAdapter>
+      </TooltipProvider>
     </TRPCReactProvider>
   );
 };
