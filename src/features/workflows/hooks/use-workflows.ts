@@ -62,3 +62,51 @@ export const useCreateWorkflow = () => {
     }),
   );
 };
+
+/**
+ * Hook to remove a workflow
+ */
+export const useRemoveWorkflow = () => {
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.workflows.remove.mutationOptions({
+      onMutate: () => {
+        const toastId = "remove-workflow";
+
+        toast.loading("Removing workflow...", {
+          id: toastId,
+          description: "Deleting your workflow.",
+        });
+
+        return { toastId };
+      },
+
+      onSuccess: async (data, _, context) => {
+        toast.success(`"${data.name}" removed`, {
+          id: context?.toastId,
+          description: "Your workflow has been deleted successfully.",
+          duration: 3500,
+        });
+
+        await Promise.all([
+          queryClient.invalidateQueries(
+            trpc.workflows.getMany.queryOptions({}),
+          ),
+          queryClient.invalidateQueries(
+            trpc.workflows.getOne.queryFilter({ id: data.id }),
+          ),
+        ]);
+      },
+
+      onError: (error, _, context) => {
+        toast.error("Couldn't remove workflow", {
+          id: context?.toastId,
+          description: error.message,
+          duration: 5000,
+        });
+      },
+    }),
+  );
+};

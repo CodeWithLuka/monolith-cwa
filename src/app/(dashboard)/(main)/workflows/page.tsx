@@ -8,6 +8,8 @@ import { WorkflowsList } from "@/features/workflows/components/workflows-list";
 import { workflowsParamsLoader } from "@/features/workflows/server/params-loader";
 import { prefetchWorkflows } from "@/features/workflows/server/prefetch-workflows";
 import { WorkflowsContainer } from "@/features/workflows/components/workflows-container";
+import { WorkflowsLoading } from "@/features/workflows/components/workflows-loading";
+import { WorkflowsError } from "@/features/workflows/components/workflows-error";
 
 type WorkflowsPageProps = {
   searchParams: Promise<SearchParams>;
@@ -21,8 +23,8 @@ const WorkflowsPage = async ({ searchParams }: WorkflowsPageProps) => {
   return (
     <WorkflowsContainer>
       <HydrateClient>
-        <ErrorBoundary fallback={<p>Error</p>}>
-          <Suspense fallback={<p>Loading</p>}>
+        <ErrorBoundary fallback={<WorkflowsError />}>
+          <Suspense fallback={<WorkflowsLoading />}>
             <WorkflowsList />
           </Suspense>
         </ErrorBoundary>
